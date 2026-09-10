@@ -8,9 +8,8 @@ wird, steht in den Modulen unter "Kontextdateien".
 
 ## Projekt
 
-Vertical Slice eines Farm- und Homestead-Builders für **Android**. Portfolio-Artefakt
-für Bewerbungen als **Programmierer**, primär bei Mobile-Studios in Berlin und
-Hamburg, sekundär bei Simulations- und Aufbau-Studios.
+Vertical Slice eines Farm- und Homestead-Builders für **Android**. Ein kleines
+Projekt aus Lust am Thema: im Umfang bewusst klein, technisch ernst gemeint.
 
 Kein kommerzielles Produkt, kein Feature-Wachstum. Erste Session im Ziel: 10–15
 Minuten, danach trägt der Offline-Fortschritt.
@@ -18,7 +17,7 @@ Minuten, danach trägt der Offline-Fortschritt.
 Engine: **Unity**. Spielkern: **pure C#, engine-frei**. Ausgeliefert wird
 ausschließlich Android in **Portrait**. Der PC ist Entwicklungsvehikel, kein Ziel.
 
-Bewertet wird das Repository genauso wie der Build. Lesbarkeit, Tests und
+Das Repository ist so wichtig wie der Build. Lesbarkeit, Tests und
 nachvollziehbare Entscheidungen haben Vorrang vor Feature-Umfang.
 
 ---
@@ -59,10 +58,11 @@ Merksatz: Android verzeiht nichts später, was früh nicht entschieden wurde.
    Engine-Typen, keine Objektreferenzen ohne stabile ID.
 5. **Kein Content im Code.** Pflanzen, Gebäude, Rezepte, Zeiten, Preise und
    Balancing liegen in Daten.
-6. **Plattformneutralität mitnehmen, wo sie nichts kostet.** Entscheidungen, die
-   eine spätere PC-Version offenhalten und Mobile nicht belasten, werden so
-   getroffen. Bei echtem Zielkonflikt gewinnt Mobile, und der Fall wird in
-   `docs/decisions.md` festgehalten.
+
+Als Leitlinie, nicht als harte Regel: **Plattformneutralität mitnehmen, wo sie
+nichts kostet.** Entscheidungen, die eine spätere PC-Version offenhalten und
+Mobile nicht belasten, werden so getroffen. Bei echtem Zielkonflikt gewinnt
+Mobile, und der Fall wird in `docs/decisions.md` festgehalten.
 
 ---
 
@@ -136,7 +136,7 @@ Regeln für den Umgang mit diesen Dateien:
 - Vor jedem Meilenstein-Commit zusätzlich ein Deploy auf das Gerät und ein
   Funktionscheck dort.
 - Kleine, thematisch saubere Commits mit aussagekräftiger Message. Kein Squashing
-  der Historie, sie ist Teil des Bewerbungsmaterials.
+  der Historie, sie ist Teil der Projektdokumentation.
 - Neue Abhängigkeiten nur nach Rückfrage. Jede Dependency muss auf Android laufen
   und IL2CPP-tauglich sein.
 - Nennenswerte Entwurfsentscheidungen als kurzer Eintrag in `docs/decisions.md`:
@@ -151,13 +151,18 @@ Regeln für den Umgang mit diesen Dateien:
 
 ## Kommandos
 
-```bash
+```powershell
 dotnet test core.tests                      # Kern-Tests, schnell, laufen ohne Unity
-./tools/build-android.sh                    # Unity batchmode -> builds/app.apk
-./tools/deploy-android.sh                   # baut, adb install -r, startet App
-./tools/push-data.sh                        # Content-/Layout-JSON aufs Gerät, ohne Rebuild
+.\tools\build-android.ps1                   # Unity batchmode -> builds/app.apk
+.\tools\deploy-android.ps1                  # baut, adb install -r, startet App
+.\tools\push-data.ps1                       # Content-/Layout-JSON aufs Gerät, ohne Rebuild
 adb logcat -s Unity                         # Laufzeit-Logs vom Gerät
 ```
+
+Die Skripte sind PowerShell, weil das die Shell auf der Entwicklungsmaschine ist.
+Sie bleiben dünn: Die eigentliche Build-Logik liegt als C#-Datei im Unity-Projekt
+und wird per `-executeMethod` angesprungen. Das Skript findet nur Unity, ruft es
+auf und reicht den Exit-Code weiter.
 
 Ein Windows-Build darf zum schnellen Ausprobieren existieren, ist aber kein
 Liefergegenstand und wird nicht gepflegt.
@@ -181,7 +186,8 @@ die erste nicht rund ist.
 - [ ] Zurückgestellte Uhr erzeugt keinen Fortschritt und keinen Schaden
 - [ ] Time-Skip mit harter Währung funktioniert Ende zu Ende gegen den Mock,
       Gutschrift ist idempotent
-- [ ] Golden-Hash identisch auf Desktop und Gerät
+- [ ] Golden-Hash identisch auf Desktop und Gerät. Der Desktop-Wert kommt aus
+      `core.tests`, nicht aus einem Unity-Windows-Build.
 - [ ] Onboarding erklärt den Loop ohne Textwand
 - [ ] `README.md` mit Video (60–90 s), einem Architekturdiagramm und drei Absätzen
       Begründung

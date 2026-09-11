@@ -69,19 +69,16 @@ Mobile, und der Fall wird in `docs/decisions.md` festgehalten.
 ## Stille Fehler
 
 Diese Punkte stehen hier und nicht in einem Modul, weil ihr Verstoß im Editor
-unsichtbar bleibt und erst auf dem Gerät auffällt. Details jeweils im genannten
-Modul.
+unsichtbar bleibt und erst auf dem Gerät auffällt. ❌ ist jeweils die naheliegende
+Desktop-Lösung, ✅ die richtige. Details im genannten Modul.
 
-- **StreamingAssets nur über `UnityWebRequest`.** File-IO funktioniert im Editor und
-  scheitert auf dem Gerät. → `rules-android-build.md`
-- **Keine reflektionsabhängige Serialisierung.** IL2CPP-Stripping entfernt sie
-  lautlos. → `rules-android-build.md`
-- **Timer sind absolute UTC-Zeitpunkte, niemals Restlaufzeiten.**
-  → `rules-time-persistence.md`
-- **Gespeichert wird bei `OnApplicationPause(true)`.** Auf `OnApplicationQuit` ist
-  auf Android kein Verlass. → `rules-time-persistence.md`
-- **Keine Iteration über `Dictionary` oder `HashSet` in Regel-Logik.** Die Reihenfolge
-  ist Teil des Zustands. → `rules-time-persistence.md`
+| ❌ Scheitert auf dem Gerät | ✅ Stattdessen | Warum | Modul |
+|---|---|---|---|
+| StreamingAssets per File-IO lesen | `UnityWebRequest` | Auf Android liegen sie im gepackten APK | `rules-android-build.md` |
+| Serialisierung per Reflection | explizite Serialisierung | IL2CPP-Stripping entfernt Reflection-Ziele lautlos | `rules-android-build.md` |
+| Timer als Restlaufzeit | absolute UTC-Zeitpunkte | Die Welt läuft weiter, während die App zu ist | `rules-time-persistence.md` |
+| Speichern bei `OnApplicationQuit` | Speichern bei `OnApplicationPause(true)` | Android tötet Prozesse, ohne Quit zu melden | `rules-time-persistence.md` |
+| Iteration über `Dictionary`/`HashSet` in Regel-Logik | geordnete Sammlungen mit stabiler Reihenfolge | Die Reihenfolge ist Teil des Zustands | `rules-time-persistence.md` |
 
 ---
 
@@ -93,7 +90,8 @@ core.tests/      Game.Core.Tests – NUnit, läuft ohne Unity
 unity/           Unity-Projekt   – ausschließlich Präsentation, Input, UI
   Assets/Scripts/Presentation
   Assets/StreamingAssets/data    – Content- und Layout-JSON, wird mitgebaut
-docs/            Regelmodule, Ressourcen, Entscheidungen, Learnings, Messwerte
+docs/            Fahrplan, Aufgabenlisten, Regelmodule, Entscheidungen, Learnings, Messwerte
+tools/           PowerShell-Hilfsskripte: Build, Deploy, Content-Push
 builds/          Artefakte (git-ignoriert)
 ```
 
@@ -131,10 +129,19 @@ Regeln für den Umgang mit diesen Dateien:
 
 ## Arbeitsweise
 
+- **Standortbestimmung zu Beginn jeder Session:** `docs/current.md` lesen. Ist die
+  Liste leer, `docs/roadmap.md` lesen, kurz den Stand melden (erledigte und offene
+  Etappen) und Aufgaben für die nächste Etappe vorschlagen. Patrick bestätigt, bevor
+  sie in `current.md` landen.
+- **Wird `current.md` mitten in einer Session leer:** nur ein kurzer Hinweis, dass die
+  aktuellen Aufgaben erledigt sind. Die volle Standortbestimmung nur auf Wunsch.
+- Erledigte Aufgaben wandern im selben Commit von `current.md` nach `done.md`. Ist
+  eine Etappe komplett, wird sie in `roadmap.md` abgehakt (⬜ → ✅) und bekommt eine
+  kurze Retrospektive in `done.md`.
 - Bei Aufgaben über eine Datei hinaus: erst Plan vorschlagen, dann implementieren.
 - Vor jedem Commit muss `dotnet test core.tests` durchlaufen.
-- Vor jedem Meilenstein-Commit zusätzlich ein Deploy auf das Gerät und ein
-  Funktionscheck dort.
+- Vor dem Commit, der eine Etappe abschließt, zusätzlich ein Deploy auf das Gerät
+  und ein Funktionscheck dort.
 - Kleine, thematisch saubere Commits mit aussagekräftiger Message. Kein Squashing
   der Historie, sie ist Teil der Projektdokumentation.
 - Neue Abhängigkeiten nur nach Rückfrage. Jede Dependency muss auf Android laufen

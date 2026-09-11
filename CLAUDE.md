@@ -114,7 +114,7 @@ Auslöser zutrifft, und zwar **bevor Code entsteht**, nicht nachdem etwas kaputt
 | Bevor du Code schreibst, der Währungen, Preise, Time-Skips oder Käufe berührt | `docs/rules-economy.md` |
 | Bevor du UI, Layout, Kamerasteuerung oder Eingaben anlegst oder änderst | `docs/rules-ui-layout.md` |
 | Bevor du Player Settings, Manifest, Gradle, Serialisierung, Content-Laden oder Abhängigkeiten anfasst | `docs/rules-android-build.md` |
-| Wenn ein Fehler nur auf dem Gerät auftritt, im Editor aber nicht | `docs/android-guide.md`, Abschnitt 13 |
+| Wenn ein Fehler nur auf dem Gerät auftritt, im Editor aber nicht | `docs/android-guide.md`, Abschnitt „Klassiker: im Editor grün, auf dem Gerät rot" |
 | Bevor du ein Unity-Thema anfasst, das im Projekt neu ist (Texturen, Audio, Profiling, Auslieferung) | `docs/android-guide.md` |
 
 Regeln für den Umgang mit diesen Dateien:
